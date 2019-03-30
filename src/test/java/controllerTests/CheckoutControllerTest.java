@@ -23,7 +23,7 @@ public class CheckoutControllerTest {
     CheckoutController checkoutController;
 
     @Test
-    public void whenItemScanned_ThenReturnHttpResponseOkValue() throws Exception {
+    public void whenItemScanned_ThenReturnHttpResponseOkValue() {
         assertEquals(checkoutController.addItemToBasket(), ResponseEntity.ok().body(HttpStatus.OK.value()));
     }
 }
