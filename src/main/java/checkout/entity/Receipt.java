@@ -1,9 +1,6 @@
 package checkout.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -16,17 +13,18 @@ public class Receipt {
     private long id;
 
     @NotNull
-    private List<SKU> shopping;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<SKU> skus;
 
     public long getId() {
         return id;
     }
 
-    public List<SKU> getShopping() {
-        return shopping;
+    public List<SKU> getSkus() {
+        return skus;
     }
 
-    public void setShopping(List<SKU> shopping) {
-        this.shopping = shopping;
+    public void setSkus(List<SKU> shopping) {
+        this.skus = shopping;
     }
 }

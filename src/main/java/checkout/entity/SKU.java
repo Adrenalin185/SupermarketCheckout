@@ -1,6 +1,8 @@
 package checkout.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,8 +10,10 @@ import javax.validation.constraints.Size;
 @Entity
 public class SKU {
 
+    @Id
     @NotBlank
-    @Size(min = 1, max = 3)
+    @Size(min = 1, max = 1)
+    @Column(unique = true)
     private String sKUID;
 
     @NotNull
