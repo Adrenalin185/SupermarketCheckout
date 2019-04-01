@@ -13,6 +13,7 @@ public class Deal {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SKU")
+    @NotNull
     private SKU sku;
 
     @NotNull

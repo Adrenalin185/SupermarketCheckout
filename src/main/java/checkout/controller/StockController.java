@@ -17,7 +17,7 @@ public class StockController {
     @Autowired
     StockService stockService;
 
-    @PutMapping("/add")
+    @PutMapping("/add-sku")
     public ResponseEntity addNewSKU(@RequestBody @Valid SKU newSKU){
         return stockService.addSKU(newSKU);
     }
