@@ -22,6 +22,14 @@ public class Deal {
     @NotNull
     private double newPrice;
 
+    public Deal (){}
+
+    public Deal(@NotNull SKU sku, @NotNull int productsRequired, @NotNull double newPrice) {
+        this.sku = sku;
+        this.productsRequired = productsRequired;
+        this.newPrice = newPrice;
+    }
+
     public long getId() {
         return id;
     }

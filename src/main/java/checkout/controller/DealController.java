@@ -16,7 +16,7 @@ public class DealController {
     @Autowired
     private DealService dealService;
 
-    @PutMapping("/add-deal/{skuid}")
+    @PutMapping("/add-deal")
     public ResponseEntity addDeal(@RequestBody @Valid Deal deal){
         return dealService.addDeal(deal);
     }
