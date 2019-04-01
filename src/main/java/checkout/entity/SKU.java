@@ -19,6 +19,12 @@ public class SKU {
     @NotNull
     private double price;
 
+    public SKU(){}
+
+    public SKU(@NotBlank @Size(min = 1, max = 1) String sKUID, @NotNull double price) {
+        this.sKUID = sKUID;
+        this.price = price;
+    }
 
     public String getsKUID() {
         return sKUID;
