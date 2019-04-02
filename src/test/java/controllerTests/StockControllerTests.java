@@ -3,6 +3,9 @@ package controllerTests;
 import checkout.Application;
 import checkout.controller.StockController;
 import checkout.entity.SKU;
+import checkout.repository.BasketItemRepository;
+import checkout.repository.DealRepository;
+import checkout.repository.ReceiptRepository;
 import checkout.repository.SKURepository;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,36 +32,48 @@ public class StockControllerTests {
     private StockController stockController;
 
     @Autowired
+    private DealRepository dealRepository;
+
+    @Autowired
     private SKURepository skuRepository;
+
+    @Autowired
+    private ReceiptRepository receiptRepository;
+
+    @Autowired
+    private BasketItemRepository basketItemRepository;
 
     private SKU skuA = new SKU("A", 0.5);
 
     @Before
     public void cleanDatabaseBetweenTests(){
+        dealRepository.deleteAll();
+        basketItemRepository.deleteAll();
+        receiptRepository.deleteAll();
         skuRepository.deleteAll();
     }
 
     @Test
     public void whenAddingSKUA_ThenShouldReturnHttpStatus200(){
 
-        assertEquals(stockController.addNewSKU(skuA), ResponseEntity.ok().body(HttpStatus.OK));
+        assertEquals(ResponseEntity.ok().body(HttpStatus.OK), stockController.addNewSKU(skuA));
     }
 
     @Test
     public void whenAddingSKUAWhenItExists_ThenReturnHttpStatus400(){
         stockController.addNewSKU(skuA);
-        assertEquals(stockController.addNewSKU(skuA), ResponseEntity.badRequest().body("SKU already exists"));
+        assertEquals(ResponseEntity.badRequest().body("SKU already exists"), stockController.addNewSKU(skuA));
     }
 
     @Test
     public void whenAmendingSKUA_ThenReturnHttpStatus200(){
         stockController.addNewSKU(skuA);
-        assertEquals(stockController.amendSKU(new SKU("A", 0.85)), ResponseEntity.ok().body(HttpStatus.OK));
+        assertEquals(ResponseEntity.ok().body(HttpStatus.OK), stockController.amendSKU(new SKU("A", 0.85)));
     }
 
     @Test
     public void whenAmendingSKUAWhenItDoesntExist_ThenReturnHttpStatus400(){
-        assertEquals(stockController.amendSKU(new SKU("A", 0.5)), ResponseEntity.badRequest().body("SKU doesn't exist"));
+        assertEquals(ResponseEntity.badRequest().body("SKU doesn't exist"), stockController.amendSKU(new SKU("A", 0.5)));
     }
 
     @Test

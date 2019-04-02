@@ -11,7 +11,7 @@ public class Deal {
     @SequenceGenerator(name = "deal_generator", initialValue = 1000)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "SKU")
     @NotNull
     private SKU sku;

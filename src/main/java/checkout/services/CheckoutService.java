@@ -50,12 +50,8 @@ public class CheckoutService {
 
         if (!basketItemList.isEmpty()){
 
-            double priceTotal = 0;
+            double priceTotal = totalsCalculator(basketItemList);
 
-            for (BasketItem basketItem: basketItemList) {
-
-                priceTotal = priceTotal + basketItem.getSku().getPrice();
-            }
 
             return ResponseEntity.ok().body(priceTotal);
         }
@@ -71,47 +67,68 @@ public class CheckoutService {
 
     private ResponseEntity addItemToBasket(String sKUID, long receiptId) {
 
-        Optional<SKU> sku = skuRepository.findById(sKUID);
         Optional<Receipt> receipt = receiptRepository.findById(receiptId);
 
-        if (sku.isPresent() && receipt.isPresent()){
+        if (receipt.isPresent()){
 
-            Optional<BasketItem> basketItem = basketItemRepository.findById(basketItemRepository.save(new BasketItem(receipt.get(), sku.get())).getId());
-            return ResponseEntity.ok().body(HttpStatus.OK);
+            Optional<SKU> sku = skuRepository.findById(sKUID);
 
+            if (sku.isPresent()) {
+
+                basketItemRepository.save(new BasketItem(receipt.get(), sku.get()));
+                return ResponseEntity.ok().body(receipt.get().getId());
+            }
+
+            return ResponseEntity.badRequest().body("Could add item with SKU: " + sKUID + " to cart");
         }
 
-        return ResponseEntity.badRequest().body("Could not add unidentified SKU: " + sKUID);
+        return ResponseEntity.badRequest().body("Receipt doesn't exist");
     }
 
     private double totalsCalculator(List<BasketItem> basketItems){
-
         Map<String, Integer> itemCount = new HashMap<>();
         double cost = 0;
 
-        // creates list of how many skus are in the basket
         for (BasketItem basketItem: basketItems) {
 
-            itemCount.put(basketItem.getSku().getsKUID(), +1);
-        }
+            String skuId = basketItem.getSku().getsKUID();
 
-        //check if there are any deals in the basket
-        for (String key : itemCount.keySet()){
-            Optional<Deal> deal = dealRepository.findDealBySku(key);
-            int count = itemCount.get(key);
+            if (!itemCount.containsKey(skuId)){
 
-            if (deal.isPresent()){
-                int required = deal.get().getProductsRequired();
-                double dealPrice = deal.get().getNewPrice();
-
-                while (count >= required){
-                    cost = cost + dealPrice;
-                    count = count - required;
-                }
+                itemCount.put(skuId, 1);
+            } else {
+                itemCount.put(skuId, itemCount.get(skuId)+1);
             }
 
-            double remainingItems = count * skuRepository.getOne(key).getPrice();
-            cost = cost + remainingItems;
+
+        }
+
+        for (String key : itemCount.keySet()){
+
+            System.out.println(key);
+
+            Optional<SKU> sku = skuRepository.findById(key);
+
+            if (sku.isPresent()) {
+
+                Optional<Deal> deal = dealRepository.findBySku(sku.get());
+                int count = itemCount.get(key);
+                System.out.println(count);
+
+                if (deal.isPresent()) {
+
+                    int required = deal.get().getProductsRequired();
+                    double dealPrice = deal.get().getNewPrice();
+
+                    while (count >= required) {
+                        cost = cost + dealPrice;
+                        count = count - required;
+                    }
+                }
+
+                double remainingItems = count * skuRepository.findById(key).get().getPrice();
+                cost = cost + remainingItems;
+            }
         }
 
         return cost;

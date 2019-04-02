@@ -4,7 +4,9 @@ import checkout.Application;
 import checkout.controller.DealController;
 import checkout.entity.Deal;
 import checkout.entity.SKU;
+import checkout.repository.BasketItemRepository;
 import checkout.repository.DealRepository;
+import checkout.repository.ReceiptRepository;
 import checkout.repository.SKURepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,23 +32,31 @@ public class DealControllerTests {
     @Autowired
     private SKURepository skuRepository;
 
+    @Autowired
+    private ReceiptRepository receiptRepository;
+
+    @Autowired
+    private BasketItemRepository basketItemRepository;
+
     private SKU skuA = new SKU("A", 0.5);
-    private Deal deal = new Deal(skuA, 3, 1.2);
+    private Deal deal = new Deal(skuA, 3, 1.3);
 
     @Before
     public void cleanDatabaseAfterTests(){
         dealRepository.deleteAll();
+        basketItemRepository.deleteAll();
+        receiptRepository.deleteAll();
         skuRepository.deleteAll();
     }
 
     @Test
     public void whenAddingAValidNewDeal_ThenShouldReturnHttpStatus200(){
         skuRepository.save(skuA);
-        assertEquals(dealController.addDeal(deal), ResponseEntity.ok().body(HttpStatus.OK));
+        assertEquals(ResponseEntity.ok().body(HttpStatus.OK), dealController.addDeal(deal));
     }
 
     @Test
     public void whenAddingAnInvalidDeal_ThenShouldReturnHttpStatus400(){
-        assertEquals(dealController.addDeal(deal), ResponseEntity.badRequest().body("SKU doesn't exist"));
+        assertEquals(ResponseEntity.badRequest().body("SKU doesn't exist"), dealController.addDeal(deal));
     }
 }

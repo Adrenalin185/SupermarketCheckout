@@ -11,7 +11,7 @@ public class Receipt {
     @SequenceGenerator(name = "receipt_generator", initialValue = 1000)
     private long id;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketItem> basketItems;
 
     public long getId() {
