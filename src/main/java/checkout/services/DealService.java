@@ -24,6 +24,7 @@ public class DealService {
 
         Optional<SKU> sku = skuRepository.findById(deal.getSku().getsKUID());
 
+
         if (sku.isPresent()) {
             dealRepository.save(deal);
             return ResponseEntity.ok().body(HttpStatus.OK);
