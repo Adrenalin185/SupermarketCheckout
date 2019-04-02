@@ -71,7 +71,6 @@ public class CheckoutControllerTest {
 
         ResponseEntity newBasket = checkoutController.startNewBasket("A");
         assertEquals(ResponseEntity.ok().body(newBasket.getBody()), checkoutController.addItemToBasket("A", Integer.parseInt(newBasket.getBody().toString())));
-
     }
 
     @Test
@@ -120,5 +119,10 @@ public class CheckoutControllerTest {
         checkoutController.addItemToBasket("A", Integer.parseInt(newBasket.getBody().toString()));
         checkoutController.addItemToBasket("A", Integer.parseInt(newBasket.getBody().toString()));
         assertEquals(ResponseEntity.ok().body(1.8), checkoutController.getTotal(Integer.parseInt(newBasket.getBody().toString())));
+    }
+
+    @Test
+    public void whenTotalingCartWithWrongId_ThenReturnHttpStatus400() {
+        assertEquals(ResponseEntity.badRequest().body("Basket for id given is either empty or does not exist"), checkoutController.getTotal(999));
     }
 }
